@@ -1,2 +1,1 @@
-# generative-adversarial-network-example
-Generative Adversarial Network Example
+# Generative Adversarial Network Example
