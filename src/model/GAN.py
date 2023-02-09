@@ -93,7 +93,7 @@ class GAN:
         return layer
 
     def _init_discriminator(self):
-        discriminator_input = Input(shape=self.input_dim, name='DiscriminatorInput')
+        discriminator_input = Input(shape=self.input_dim, name='discriminator_input')
         x = discriminator_input
 
         for i in range(self.n_layers_discriminator):
@@ -102,7 +102,7 @@ class GAN:
                 kernel_size=self.discriminator_conv_kernel_size[i],
                 strides=self.discriminator_conv_strides[i],
                 padding='same',
-                name='DiscriminatorConv' + str(i),
+                name='discriminator_conv' + str(i),
                 kernel_initializer=self.weight_init
             )(x)
 
@@ -121,7 +121,7 @@ class GAN:
         self.discriminator = Model(discriminator_input, discriminator_output)
     
     def _init_generator(self):
-        generator_input = Input(shape=(self.z_dim,), name='GeneratorInput')
+        generator_input = Input(shape=(self.z_dim,), name='generator_input')
         x = generator_input
 
         x = Dense(np.prod(self.generator_initial_dense_layer_size), kernel_initializer = self.weight_init)(x)
@@ -144,7 +144,7 @@ class GAN:
                     filters = self.generator_conv_filters[i],
                     kernel_size = self.generator_conv_kernel_size[i],
                     padding = 'same',
-                    name = 'GeneratorConv' + str(i),
+                    name = 'generator_conv' + str(i),
                     kernel_initializer = self.weight_init
                 )(x)
             else:
@@ -153,7 +153,7 @@ class GAN:
                     kernel_size = self.generator_conv_kernel_size[i],
                     padding = 'same',
                     strides = self.generator_conv_strides[i],
-                    name = 'GeneratorConv' + str(i),
+                    name = 'generator_conv' + str(i),
                     kernel_initializer = self.weight_init
                 )(x)
 
@@ -257,6 +257,7 @@ class GAN:
             self.generator_losses.append(generator)
 
             if epoch % print_every_n_batches == 0:
+                logger.info(f"{epoch} [D loss: ({discriminator['d_loss']:.3f})(R {discriminator['d_loss_real']:.3f}, F {discriminator['d_loss_fake']:.3f})] [D acc: ({discriminator['d_acc']:.3f})({discriminator['d_acc_real']:.3f}, {discriminator['d_acc_fake']:.3f})] [G loss: {generator[0]:.3f}] [G acc: {generator[1]:.3f}]")
                 self.model.save_weights(join('./model', 'weights', 'weights-%d.h5' % (epoch)))
                 self.model.save_weights(join('./model', 'weights', 'weights.h5'))
                 self.save()

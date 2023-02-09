@@ -131,3 +131,6 @@ dmypy.json
 # Data
 /data
 /data/*
+
+# Weights
+model/weights/weights-*.h5
